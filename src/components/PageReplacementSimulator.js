@@ -327,115 +327,104 @@ export default function PageReplacementSimulator() {
             </button>
           </div>
 
-          <div className="input-grid">
-            {/* Left Column - Page Reference Input */}
-            <div className="column">
-              <div className="input-group">
-                <label className="label">Page Reference String</label>
-                <div className="input-row">
-                  <select 
-                    className="select-input"
-                    value={sequenceType}
-                    onChange={(e) => {
-                      if (e.target.value !== 'custom') {
-                        handleLoadPreset(e.target.value);
-                      }
-                      setSequenceType(e.target.value);
-                    }}
-                  >
-                    <option value="custom">Custom Input</option>
-                    <option value="simple">Simple Sequence</option>
-                    <option value="repeated">Repeated Pattern</option>
-                    <option value="localityOfReference">Locality of Reference</option>
-                    <option value="thrashing">Thrashing Example</option>
-                  </select>
-                  
-                  <div className="random-input">
-                    <input 
-                      type="number" 
-                      min="5" 
-                      max="50" 
-                      value={randomSequenceLength} 
-                      onChange={(e) => setRandomSequenceLength(Number(e.target.value))}
-                      className="number-input"
-                    />
-                    <button 
-                      onClick={handleRandomSequence}
-                      className="primary-button"
-                    >
-                      Random
-                    </button>
-                  </div>
-                </div>
-                <textarea
-                  value={pageString}
-                  onChange={(e) => {
-                    setPageString(e.target.value);
-                    setSequenceType('custom');
-                  }}
-                  className="textarea-input"
-                  placeholder="Enter page reference string (e.g., 1 2 3 4 1 2 5)"
+          <div className="input-form-stack">
+            {/* First row: Page Reference String controls */}
+            <div className="input-row" style={{marginBottom: '1rem'}}>
+              <select 
+                className="select-input"
+                value={sequenceType}
+                onChange={(e) => {
+                  if (e.target.value !== 'custom') {
+                    handleLoadPreset(e.target.value);
+                  }
+                  setSequenceType(e.target.value);
+                }}
+                style={{minWidth: '140px'}}
+              >
+                <option value="custom">Custom Input</option>
+                <option value="simple">Simple Sequence</option>
+                <option value="repeated">Repeated Pattern</option>
+                <option value="localityOfReference">Locality of Reference</option>
+                <option value="thrashing">Thrashing Example</option>
+              </select>
+              <input 
+                type="number" 
+                min="5" 
+                max="50" 
+                value={randomSequenceLength} 
+                onChange={(e) => setRandomSequenceLength(Number(e.target.value))}
+                className="number-input"
+                style={{width: '70px'}}
+              />
+              <button 
+                onClick={handleRandomSequence}
+                className="primary-button random-btn"
+                style={{minWidth: '110px'}}
+              >
+                <span role="img" aria-label="dice">🎲</span> Random
+              </button>
+            </div>
+            {/* Second row: Frame Size and Algorithm */}
+            <div className="input-row" style={{marginBottom: '1rem'}}>
+              <div style={{display: 'flex', flexDirection: 'column', flex: 1, marginRight: '1rem'}}>
+                <label className="label">Frame Size</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={frameCount}
+                  onChange={(e) => setFrameCount(parseInt(e.target.value))}
+                  className="input"
                 />
               </div>
-            </div>
-            
-            {/* Right Column - Simulator Settings */}
-            <div className="column">
-              <div className="settings-grid">
-                <div className="input-group">
-                  <label className="label">Frame Size</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={frameCount}
-                    onChange={(e) => setFrameCount(parseInt(e.target.value))}
-                    className="input"
-                  />
-                </div>
-                
-                <div className="input-group">
-                  <label className="label">Algorithm</label>
-                  <select
-                    value={algorithm}
-                    onChange={(e) => setAlgorithm(e.target.value)}
-                    className="select-input"
-                  >
-                    <option value="fifo">FIFO</option>
-                    <option value="lru">LRU</option>
-                    <option value="optimal">Optimal</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="input-group">
-                <div className="info-header">
-                  <label className="label">Algorithm Info</label>
-                  <button 
-                    onClick={() => setShowDescription(!showDescription)}
-                    className="secondary-button"
-                  >
-                    {showDescription ? 'Hide Info' : 'Show Info'}
-                  </button>
-                </div>
-                
-                {showDescription && (
-                  <div className="info-box">
-                    <h3 className="info-title">{getAlgorithmName(algorithm)}</h3>
-                    <p>{getAlgorithmDescription(algorithm)}</p>
-                  </div>
-                )}
-              </div>
-              
-              <div className="button-container right">
-                <button
-                  onClick={handleSimulate}
-                  className="primary-button large"
+              <div style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+                <label className="label">Algorithm</label>
+                <select
+                  value={algorithm}
+                  onChange={(e) => setAlgorithm(e.target.value)}
+                  className="select-input"
                 >
-                  Simulate
+                  <option value="fifo">FIFO</option>
+                  <option value="lru">LRU</option>
+                  <option value="optimal">Optimal</option>
+                </select>
+              </div>
+            </div>
+            {/* Third row: Textarea */}
+            <textarea
+              value={pageString}
+              onChange={(e) => {
+                setPageString(e.target.value);
+                setSequenceType('custom');
+              }}
+              className="textarea-input"
+              placeholder="Enter page reference string (e.g., 1 2 3 4 1 2 5)"
+              style={{marginBottom: '1.2rem'}}
+            />
+            {/* Fourth row: Info and Simulate button */}
+            <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1.2rem'}}>
+              <div className="info-header">
+                <label className="label">Algorithm Info</label>
+                <button 
+                  onClick={() => setShowDescription(!showDescription)}
+                  className="secondary-button"
+                >
+                  {showDescription ? 'Hide Info' : 'Show Info'}
                 </button>
               </div>
+              <button
+                onClick={handleSimulate}
+                className="primary-button large"
+              >
+                Simulate
+              </button>
             </div>
+            {showDescription && (
+              <div className="info-box" style={{marginTop: '1rem'}}>
+                <h3 className="info-title">{getAlgorithmName(algorithm)}</h3>
+                <p>{getAlgorithmDescription(algorithm)}</p>
+              </div>
+            )}
           </div>
         </div>
 
